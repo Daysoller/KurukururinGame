@@ -170,17 +170,17 @@ const Game = ({ onPause, onGameOver }) => {
         )}
       </div>
 
-      <div className="absolute top-4 right-4 bg-gray-800 text-zinc-200 p-4 rounded-lg font-semibold">
+      <div className="absolute top-4 right-4 bg-gray-800 text-zinc-200 p-4 rounded-lg font-semibold bg-opacity-60">
         Distancia:<p className="text-amber-300"> {distance}m</p>
       </div>
       <button
         onClick={onPause}
-        className="absolute top-4 left-4 px-4 py-2 text-zinc-100 bg-blue-600 rounded hover:bg-blue-500 transition"
+        className="absolute top-4 left-4 px-4 py-2 text-zinc-100 bg-blue-500 rounded hover:bg-blue-400 transition bg-opacity-60"
       >
         Pausa
       </button>
 
-      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-64 h-4 bg-gray-700 rounded-full overflow-hidden">
+      <div className="absolute top-4 left-1/2 transform -translate-x-1/2 w-48 h-4 bg-gray-700 rounded-full overflow-hidden">
         <div
           className={`h-full ${getBarColor()} transition-all duration-500`}
           style={{ width: `${getLifePercentage()}%` }}

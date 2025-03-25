@@ -10,7 +10,7 @@ const GameOver = ({ onStart, onQuit }) => {
         />
 
         <h1 className="text-4xl font-bold mb-6 text-stone-300 bg-red-950 rounded-full p-10 fade-border">
-          ¡PUTO SHIROU!
+          ¡ES TU CULPA SHIROU!
         </h1>
 
         <button
