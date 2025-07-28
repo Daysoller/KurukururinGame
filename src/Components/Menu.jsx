@@ -5,18 +5,13 @@ import { useState } from "react";
 import confetti from "canvas-confetti";
 // eslint-disable-next-line react/prop-types
 const Menu = ({ onStart }) => {
-  const [onActiveSurprise, activeSurprise] = useState(false);
-
+  const [openModal, setOpenModal] = useState(false);
   function handleActiveSurprise() {
     confetti();
-    activeSurprise(true);
+    setOpenModal(true);
   }
   return (
     <div>
-      <div className="felx flex-center justify-center text-center">
-        {onActiveSurprise && <SurpriseModal />}
-      </div>
-
       <div
         className="menu w-full flex flex-col items-center justify-center text-white h-screen"
         style={{
@@ -37,17 +32,18 @@ const Menu = ({ onStart }) => {
         </h1>
         <button
           onClick={handleActiveSurprise}
-          className="bg-green-600 hover:bg-green-500 px-24 py-3 text-3xl m-3 rounded-lg"
+          className="bg-indigo-800 bg-opacity-90 hover:bg-indigo-700 border-2 px-24 py-3 text-3xl m-3 rounded-lg"
         >
           Sorpresa
         </button>
         <button
           onClick={onStart}
-          className="px-24 py-1 bg-blue-950 hover:bg-blue-900 rounded text-xl transition"
+          className="px-24 py-1 bg-blue-950 bg-opacity-30 hover:bg-blue-900 rounded text-xl transition"
         >
           Iniciar Juego
         </button>
       </div>
+      <SurpriseModal setOpen={setOpenModal} open={openModal} />
     </div>
   );
 };
