@@ -69,10 +69,12 @@ const Game = ({ onStart, onGameOver }) => {
   const explodingRocksRef = useRef([]);
   const bossRef = useRef(null);
   const livesRef = useRef(3);
-  const distanceRef = useRef(0);
+  const distanceRef = useRef(5000);
   const jumpQueueRef = useRef(0);
   const bossDirectionRef = useRef(1);
   const bossPhaseRef = useRef(0);
+  const bossNextAttackRef = useRef('bullet'); // 'bullet' or 'meteor'
+  const defeatedBossesRef = useRef(new Set()); // Track defeated bosses
 
   // Timers para lógica (usando refs para persistencia en loop)
   const lastTimeRef = useRef(0);
@@ -81,13 +83,13 @@ const Game = ({ onStart, onGameOver }) => {
 
   const [isPaused, setIsPaused] = useState(false);
   const isPausedRef = useRef(false);
-  const [bossActive, setBossActive] = useState(false);
   const [bossLives, setBossLives] = useState(3);
   const [victory, setVictory] = useState(false);
   const [isOpenPauseMenu, setIsOpenPauseMenu] = useState(false);
   const [showInitialText, setShowInitialText] = useState(true);
   const [showBossText, setShowBossText] = useState(false);
   const [displayDistance, setDisplayDistance] = useState(0);
+  const [, forceUpdate] = useState(0); // Force re-render trigger
 
   const initialTextTimerRef = useRef(null);
   const bossTextTimerRef = useRef(null);
@@ -102,7 +104,7 @@ const Game = ({ onStart, onGameOver }) => {
   }, [isPaused]);
 
   useEffect(() => {
-    if (!bossActive) {
+    if (!bossRef.current) {
       setShowInitialText(true);
       clearTimeout(initialTextTimerRef.current);
       initialTextTimerRef.current = setTimeout(() => {
@@ -110,7 +112,7 @@ const Game = ({ onStart, onGameOver }) => {
       }, 8000);
     }
 
-    if (bossActive && bossPhaseRef.current > 0) {
+    if (bossRef.current && bossPhaseRef.current > 0) {
       setShowBossText(true);
       clearTimeout(bossTextTimerRef.current);
       bossTextTimerRef.current = setTimeout(() => {
@@ -122,7 +124,7 @@ const Game = ({ onStart, onGameOver }) => {
       clearTimeout(initialTextTimerRef.current);
       clearTimeout(bossTextTimerRef.current);
     };
-  }, [bossActive, bossPhaseRef.current]);
+  }, [bossPhaseRef.current]);
 
   useEffect(() => {
     const img = new Image();
@@ -152,7 +154,7 @@ const Game = ({ onStart, onGameOver }) => {
       phase,
     };
     setBossLives(config.lives);
-    setBossActive(true);
+    bossNextAttackRef.current = 'bullet'; // Reset attack cycle
   };
 
   const spawnExplosionFragments = (meteorite) => {
@@ -308,9 +310,10 @@ const Game = ({ onStart, onGameOver }) => {
       for (let phase = 1; phase <= 3; phase++) {
         if (
           currentDist >= GAME_CONFIG.BOSS_SPAWN_DISTANCES[phase] &&
-          currentDist < GAME_CONFIG.BOSS_SPAWN_DISTANCES[phase] + 150
+          !defeatedBossesRef.current.has(phase)
         ) {
           spawnBoss(phase);
+          break; // Only spawn one boss at a time
         }
       }
 
@@ -377,7 +380,7 @@ const Game = ({ onStart, onGameOver }) => {
       );
 
     // ===== UPDATE BOSS =====
-    if (bossActive && bossRef.current) {
+    if (bossRef.current) {
       const bossConfig = GAME_CONFIG.BOSS_CONFIGS[bossRef.current.phase];
 
       // Movimiento vertical
@@ -388,16 +391,19 @@ const Game = ({ onStart, onGameOver }) => {
         bossRef.current.y + bossRef.current.height >= innerHeight
       ) {
         bossDirectionRef.current *= -1;
-        // Clamp para que no se quede pegado
         bossRef.current.y = Math.max(0, Math.min(bossRef.current.y, innerHeight - bossRef.current.height));
       }
 
       // Disparos
       if (time - lastShootTimeRef.current > bossConfig.shootInterval) {
-        if (Math.random() < 0.3) {
+        if (bossNextAttackRef.current === 'meteor') {
+          console.log('🚀 BOSS SHOOTING GIANT METEOR!');
           spawnExplodingRock();
+          bossNextAttackRef.current = 'bullet';
         } else {
+          console.log('🔫 Boss shooting bullet');
           spawnBossBullet(bossRef.current.phase);
+          bossNextAttackRef.current = 'meteor';
         }
         lastShootTimeRef.current = time;
       }
@@ -417,16 +423,18 @@ const Game = ({ onStart, onGameOver }) => {
           rock.x += rock.vx * cappedDt;
           // Collision player
           const isHit =
-            rock.x < pos.x + charWidth &&
-            rock.x + rock.width > pos.x &&
-            rock.y < pos.y + charHeight &&
-            rock.y + rock.height > pos.y;
+            rock.x - rock.width / 2 < pos.x + charWidth &&
+            rock.x + rock.width / 2 > pos.x &&
+            rock.y - rock.height / 2 < pos.y + charHeight &&
+            rock.y + rock.height / 2 > pos.y;
 
           if (isHit) {
+            console.log('🎯 PLAYER HIT GIANT METEOR! Deflecting back to boss');
             const boss = bossRef.current;
             rock.vx = (boss.x - rock.x) / 500; // Return velocity factor
             rock.vy = (boss.y - rock.y) / 500;
             rock.returning = true;
+            console.log('✅ Meteor now returning:', { x: rock.x, y: rock.y, vx: rock.vx, vy: rock.vy });
           }
         } else if (rock.returning && !rock.exploding) {
           rock.x += rock.vx * cappedDt * 20;
@@ -436,20 +444,23 @@ const Game = ({ onStart, onGameOver }) => {
           const boss = bossRef.current;
           const collides =
             boss &&
-            rock.x < boss.x + boss.width &&
-            rock.x + rock.width > boss.x &&
-            rock.y < boss.y + boss.height &&
-            rock.y + rock.height > boss.y;
+            rock.x - rock.width / 2 < boss.x + boss.width &&
+            rock.x + rock.width / 2 > boss.x &&
+            rock.y - rock.height / 2 < boss.y + boss.height &&
+            rock.y + rock.height / 2 > boss.y;
 
           if (collides) {
+            console.log('💥 METEOR HIT BOSS! Damaging boss...');
             rock.exploding = true;
             createExplosion(rock.x, rock.y);
             setBossLives(prev => {
               const updated = prev - 1;
+              console.log(`❤️ Boss lives: ${prev} -> ${updated}`);
               if (updated <= 0) {
+                console.log('🏆 BOSS DEFEATED!');
                 explodingRocksRef.current = [];
+                defeatedBossesRef.current.add(bossPhaseRef.current); // Mark boss as defeated
                 bossRef.current = null;
-                setBossActive(false);
                 if (bossPhaseRef.current === 3) {
                   setVictory(true);
                   setIsPaused(true);
@@ -459,6 +470,24 @@ const Game = ({ onStart, onGameOver }) => {
               }
               return updated;
             });
+          } else if (rock.returning) {
+            // Debug: Check why collision might not be detected
+            if (boss) {
+              const rockLeft = rock.x - rock.width / 2;
+              const rockRight = rock.x + rock.width / 2;
+              const rockTop = rock.y - rock.height / 2;
+              const rockBottom = rock.y + rock.height / 2;
+              console.log('🔍 Checking collision:', {
+                rock: { x: rock.x, y: rock.y, left: rockLeft, right: rockRight, top: rockTop, bottom: rockBottom },
+                boss: { x: boss.x, y: boss.y, right: boss.x + boss.width, bottom: boss.y + boss.height },
+                checks: {
+                  leftCheck: rockLeft < boss.x + boss.width,
+                  rightCheck: rockRight > boss.x,
+                  topCheck: rockTop < boss.y + boss.height,
+                  bottomCheck: rockBottom > boss.y
+                }
+              });
+            }
           }
         } else if (rock.exploding) {
           rock.explosionTime += 1 * (cappedDt / 16);
@@ -624,9 +653,12 @@ const Game = ({ onStart, onGameOver }) => {
     });
 
     // Increase Distance
-    if (!bossActive) {
+    if (!bossRef.current) {
       distanceRef.current += 1 * (cappedDt / 16);
     }
+
+    // Force React re-render to sync UI with game state
+    forceUpdate(n => n + 1);
 
     animationRef.current = requestAnimationFrame(gameLoop);
   };
@@ -738,7 +770,7 @@ const Game = ({ onStart, onGameOver }) => {
       </div>
 
       {/* Mensaje inicial */}
-      {!bossActive && showInitialText && (
+      {!bossRef.current && showInitialText && (
         <div className="absolute top-32 left-1/2 transform -translate-x-1/2 text-center z-40">
           <p className="text-amber-300 text-sm md:text-base font-bold px-4 py-2 bg-gray-600 bg-opacity-20 rounded">
             Derrota a los 3 jefes finales para ganar
@@ -747,14 +779,14 @@ const Game = ({ onStart, onGameOver }) => {
       )}
 
       {/* Boss HUD */}
-      {bossActive && (
+      {bossRef.current && (
         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-lg md:text-2xl z-40">
           {"❤️".repeat(bossLives)}
         </div>
       )}
 
       {/* Boss Fase Texto */}
-      {bossActive && bossPhaseRef.current > 0 && showBossText && (
+      {bossRef.current && bossPhaseRef.current > 0 && showBossText && (
         <div className="absolute top-32 left-1/2 transform -translate-x-1/2 text-center z-40">
           <p className="text-red-300 text-lg md:text-xl font-bold animate-pulse mb-2">
             BOSS {bossPhaseRef.current}/3
