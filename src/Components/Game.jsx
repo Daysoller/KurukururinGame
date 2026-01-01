@@ -149,6 +149,8 @@ const Game = ({ onStart, onGameOver }) => {
       height: h,
       phase,
     };
+    // Ensure boss starts moving vertically when spawned
+    bossDirectionRef.current = 1;
     setBossLives(config.lives);
     bossNextAttackRef.current = "bullet";
   };
@@ -656,9 +658,9 @@ const Game = ({ onStart, onGameOver }) => {
 
   const getLifePercentage = () => (livesRef.current / 3) * 100;
   const getBarColor = () => {
-    if (livesRef.current === 3) return "bg-green-500";
-    if (livesRef.current === 2) return "bg-yellow-500";
-    if (livesRef.current === 1) return "bg-red-500";
+    if (livesRef.current === 3) return "bg-green-700";
+    if (livesRef.current === 2) return "bg-yellow-700";
+    if (livesRef.current === 1) return "bg-red-700";
     return "bg-gray-700";
   };
 
@@ -713,22 +715,14 @@ const Game = ({ onStart, onGameOver }) => {
           setIsPaused(true);
           setIsOpenPauseMenu(true);
         }}
-        className="absolute top-4 left-4 px-4 py-2 text-white bg-blue-700 hover:bg-blue-600 rounded-lg transition border-2 border-blue-500 font-semibold text-sm md:text-base z-10"
+        className="absolute top-4 left-4 px-4 py-2 text-white bg-blue-900/75 hover:bg-blue-800/75 rounded-lg transition border-2 border-blue-700 font-semibold text-sm md:text-base z-10"
       >
         ⏸ Pausa
       </button>
       <div className="absolute top-16 left-1/2 transform -translate-x-1/2 w-40 md:w-48 h-6 bg-gray-800 rounded-full overflow-hidden z-10 border-2 border-gray-600">
         <div
           className={`h-full ${getBarColor()} transition-all duration-500`}
-          style={{
-            width: `${getLifePercentage()}%`,
-            background:
-              getLifePercentage() > 66
-                ? "linear-gradient(90deg, #10b981, #059669)"
-                : getLifePercentage() > 33
-                ? "linear-gradient(90deg, #eab308, #ca8a04)"
-                : "linear-gradient(90deg, #ef4444, #dc2626)",
-          }}
+          style={{ width: `${getLifePercentage()}%` }}
         ></div>
       </div>
       {!bossRef.current && showInitialText && (
@@ -771,7 +765,7 @@ const Game = ({ onStart, onGameOver }) => {
               ¡Derrotaste a los 3 bosses con éxito!
             </p>
             <button
-              className="mt-6 bg-green-700 hover:bg-green-600 text-white py-3 px-8 rounded-lg font-bold transition transform hover:scale-105 border-2 border-green-600 text-lg"
+              className="mt-6 bg-blue-900 hover:bg-blue-800 text-white py-3 px-8 rounded-lg font-bold transition transform hover:scale-105 border-2 border-blue-600 text-lg"
               onClick={() => {
                 confetti({
                   particleCount: 100,
