@@ -63,7 +63,7 @@ const Game = ({ onStart, onGameOver }) => {
   const explodingRocksRef = useRef([]);
   const bossRef = useRef(null);
   const livesRef = useRef(3);
-  const distanceRef = useRef(5000);
+  const distanceRef = useRef(0);
   const jumpQueueRef = useRef(0);
   const bossDirectionRef = useRef(1);
   const bossPhaseRef = useRef(0);
