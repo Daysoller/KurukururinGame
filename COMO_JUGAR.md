@@ -36,9 +36,9 @@ Derrotar a los 3 bosses para ganar el juego y ver un especial mensaje de cumplea
 ### 3️⃣ **Vence los 3 Bosses**
 
 ```
-Boss 1 (Fácil)    → 15,000m
-Boss 2 (Medio)    → 30,000m
-Boss 3 (Difícil)  → 40,000m
+Boss 1 (Fácil)    → 2,000m
+Boss 2 (Medio)    → 4,000m
+Boss 3 (Difícil)  → 6,000m
 ```
 
 ### 4️⃣ **Victoria**
