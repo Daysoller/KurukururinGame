@@ -715,7 +715,7 @@ const Game = ({ onStart, onGameOver }) => {
           setIsPaused(true);
           setIsOpenPauseMenu(true);
         }}
-        className="absolute top-4 left-4 px-4 py-2 text-white bg-blue-900/75 hover:bg-blue-800/75 rounded-lg transition border-2 border-blue-700 font-semibold text-sm md:text-base z-10"
+        className="absolute p-10 top-6 left-6 text-white bg-blue-900/80 hover:bg-blue-800/90 rounded-xl border-2 border-blue-600 font-bold text-lg z-20 shadow-lg transition transform hover:scale-105 backdrop-blur-sm"
       >
         ⏸ Pausa
       </button>
@@ -727,7 +727,7 @@ const Game = ({ onStart, onGameOver }) => {
       </div>
       {!bossRef.current && showInitialText && (
         <div className="absolute top-32 left-1/2 transform -translate-x-1/2 text-center z-40">
-          <p className="text-amber-300 text-sm md:text-base font-bold px-4 py-2 bg-gray-600 bg-opacity-20 rounded">
+          <p className="text-amber-300 text-sm md:text-base font-bold px-4 py-2 bg-gray-600/20 rounded">
             Derrota a los 3 jefes finales para ganar
           </p>
         </div>
@@ -742,14 +742,14 @@ const Game = ({ onStart, onGameOver }) => {
           <p className="text-red-300 text-lg md:text-xl font-bold animate-pulse mb-2">
             BOSS {bossPhaseRef.current}/3
           </p>
-          <p className="text-white text-sm md:text-base bg-gray-600 bg-opacity-20 px-4 py-2 rounded animate-bounce">
+          <p className="text-white text-sm md:text-base bg-gray-600/20 px-4 py-2 rounded animate-bounce">
             ¡Toca el meteorito para devolvérselo al jefe!
           </p>
         </div>
       )}
       {victory && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
           onClick={() => {
             confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
           }}
