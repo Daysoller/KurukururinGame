@@ -5,7 +5,7 @@ export const SurpriseModal = ({ setOpen, open }) => {
     <div>
       {open && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/70 z-50 p-4">
-          <div className="relative bg-blue-900 rounded-xl shadow-2xl w-full max-w-md p-8 border border-blue-700">
+          <div className="relative bg-blue-900 rounded-xl shadow-2xl w-full max-w-md p-2 border border-blue-700">
             <button
               type="button"
               className="absolute top-3 right-3 text-blue-200 text-xl font-bold hover:text-red-400 transition-colors bg-blue-950/50 rounded-full w-8 h-8 flex items-center justify-center"

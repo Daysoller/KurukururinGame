@@ -102,7 +102,7 @@ const Game = ({ onStart, onGameOver }) => {
       clearTimeout(initialTextTimerRef.current);
       initialTextTimerRef.current = setTimeout(
         () => setShowInitialText(false),
-        8000
+        8000,
       );
     }
     if (bossRef.current && bossPhaseRef.current > 0) {
@@ -246,7 +246,7 @@ const Game = ({ onStart, onGameOver }) => {
           height: 15,
           vx: -7 * speedMultiplier,
           vy: dy * 2 * speedMultiplier,
-        }))
+        })),
       );
     else if (phase === 2) {
       const angles = [-2, -1, 0, 1, 2];
@@ -258,7 +258,7 @@ const Game = ({ onStart, onGameOver }) => {
           height: 15,
           vx: -6 * speedMultiplier,
           vy: dy * 1.5 * speedMultiplier,
-        }))
+        })),
       );
     } else if (phase === 3) {
       for (let i = 0; i < 8; i++) {
@@ -361,7 +361,7 @@ const Game = ({ onStart, onGameOver }) => {
           obs !== null &&
           (obs.isFragment
             ? obs.life > 0 && obs.x + obs.width > 0
-            : obs.x + obs.width > 0)
+            : obs.x + obs.width > 0),
       );
     if (pendingFragmentsRef.current && pendingFragmentsRef.current.length) {
       obstaclesRef.current.push(...pendingFragmentsRef.current);
@@ -379,7 +379,7 @@ const Game = ({ onStart, onGameOver }) => {
         bossDirectionRef.current *= -1;
         bossRef.current.y = Math.max(
           0,
-          Math.min(bossRef.current.y, innerHeight - bossRef.current.height)
+          Math.min(bossRef.current.y, innerHeight - bossRef.current.height),
         );
       }
       if (time - lastShootTimeRef.current > bossConfig.shootInterval) {
@@ -401,7 +401,7 @@ const Game = ({ onStart, onGameOver }) => {
         y: b.y + b.vy * cappedDt,
       }))
       .filter(
-        (b) => b.x + b.width / 2 > 0 && b.y > -50 && b.y < innerHeight + 50
+        (b) => b.x + b.width / 2 > 0 && b.y > -50 && b.y < innerHeight + 50,
       );
 
     const pos = positionRef.current;
@@ -525,7 +525,7 @@ const Game = ({ onStart, onGameOver }) => {
             obs.x,
             obs.y,
             obs.width,
-            obs.height
+            obs.height,
           );
           ctx.shadowColor = "transparent";
         }
@@ -564,7 +564,7 @@ const Game = ({ onStart, onGameOver }) => {
             rock.x - rock.width / 2,
             rock.y - rock.height / 2,
             rock.width,
-            rock.height
+            rock.height,
           );
           ctx.shadowColor = "transparent";
         }
@@ -715,7 +715,7 @@ const Game = ({ onStart, onGameOver }) => {
           setIsPaused(true);
           setIsOpenPauseMenu(true);
         }}
-        className="absolute p-10 top-6 left-6 text-white bg-blue-900/80 hover:bg-blue-800/90 rounded-xl border-2 border-blue-600 font-bold text-lg z-20 shadow-lg transition transform hover:scale-105 backdrop-blur-sm"
+        className="absolute p-2 top-6 left-6 text-white bg-blue-900/80 hover:bg-blue-800/90 rounded-xl border-2 border-blue-600 font-bold text-lg z-20 shadow-lg transition transform hover:scale-105 backdrop-blur-sm"
       >
         ⏸ Pausa
       </button>

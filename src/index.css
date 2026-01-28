@@ -1,9 +1,32 @@
 @import "tailwindcss";
 
-* {
+/* * {
+  box-sizing: border-box;
+}
+
+html,
+body,
+div,
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+pre,
+a,
+abbr,
+code,
+em,
+strong,
+button,
+input,
+select,
+textarea {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
 html,
@@ -13,9 +36,12 @@ body,
   height: 100%;
   overflow: hidden;
 }
-
+ */
 body {
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 
 @layer utilities {
