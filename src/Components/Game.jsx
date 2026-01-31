@@ -149,7 +149,7 @@ const Game = ({ onStart, onGameOver }) => {
       height: h,
       phase,
     };
-    // Ensure boss starts moving vertically when spawned
+
     bossDirectionRef.current = 1;
     setBossLives(config.lives);
     bossNextAttackRef.current = "bullet";
